@@ -1,6 +1,8 @@
 import tkinter as tk
 import calendar
-from tkinter import ttk
+import event
+from event import Event
+from tkinter import ttk, NSEW
 
 #todo find out google classroom importing stuff
 #work on iterating through calendar output
@@ -11,20 +13,29 @@ root = tk.Tk()
 frame = tk.Frame(root, padx=10, pady=10 )
 frame.config()
 frame.grid()
-ttk.Label(frame, text = "Month").grid(column = 10, row = 10)
+ttk.Label(frame, text = "Month").grid(column = 10, row = 0)
 
 daysofmonth = tk.Frame(frame, padx=10, pady=10)
-daysframe = ttk.Frame(frame, padding=10)
-daysframe.grid(column = 10, row = 20)
+#daysframe = ttk.Frame(frame, padding=10)
+#daysframe.grid(column = 10, row = 20)
 daysofweek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 for i in range(7):
     tk.Label(daysofmonth, text = daysofweek[i], width = 5, height = 2).grid(column = i, row = 0, padx = 2, pady = 2)
 #ttk.Button(frame, text = "Exit button", command = root.destroy).grid(column = 10, row = 20)
 
 dayViewFrame = ttk.Frame(frame, padding=10)
-dayViewFrame.grid(column = 100 , row = 0)
+dayViewFrame.grid(column = 100 , row = 30)
+placeholder1 = Event("placeholder1", "12:00", dayViewFrame)
+placeholder2 = Event("placeholder2", "13:00", dayViewFrame)
+placeholder3 = Event("placeholder3", "14:00", dayViewFrame)
+eventList = [placeholder1, placeholder2, placeholder3]
 def editDay(event, dayNumber):
-    tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
+    print(eventList)
+    for idx, i in enumerate(eventList):
+        i.grid(column = 10, row = 0 + idx, sticky = NSEW)
+        print(i)
+
+    #tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
 
 #daysofmonth = tk.Frame(frame, padx=10, pady=10)
 daysofmonth.grid(column=10, row=30)
