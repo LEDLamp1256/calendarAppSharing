@@ -1,14 +1,18 @@
 import tkinter as tk
 import calendar
+from typing import Dict, List
+
 import event
 from event import Event
 from tkinter import ttk, NSEW
+import datetime
 
 #todo find out google classroom importing stuff
 #work on iterating through calendar output
 #figure out idea for end result (what is the desired outcome)
 #persistence in program(.json)
 
+dayStorage:Dict[datetime.datetime,List[Event]] = {}
 root = tk.Tk()
 frame = tk.Frame(root, padx=10, pady=10 )
 frame.config()
@@ -29,7 +33,8 @@ placeholder1 = Event("placeholder1", "12:00", dayViewFrame)
 placeholder2 = Event("placeholder2", "13:00", dayViewFrame)
 placeholder3 = Event("placeholder3", "14:00", dayViewFrame)
 eventList = [placeholder1, placeholder2, placeholder3]
-def editDay(event, dayNumber):
+def editDay(event, date:datetime.datetime):
+    eventList = dayStorage.get(date, [])
     print(eventList)
     for idx, i in enumerate(eventList):
         i.grid(column = 10, row = 0 + idx, sticky = NSEW)
@@ -41,13 +46,17 @@ def editDay(event, dayNumber):
 daysofmonth.grid(column=10, row=30)
 daysofmonth.config(background = "grey")
 cal = calendar.TextCalendar(calendar.MONDAY)
-cal.formatmonth(2022, 5)
-print(cal.formatmonth(2022, 5))
-for idx, i in enumerate(cal.itermonthdays(2022, 5)):
-    if i == 0:
+year = 2022
+month = 6
+cal.formatmonth(year, month)
+print(cal.formatmonth(year, month))
+for idx, day in enumerate(cal.itermonthdays(year, month)):
+    if day == 0:
         pass
     else:
-        lbl = tk.Label(daysofmonth, text=i, width = 5, height = 5)
+
+        lbl = tk.Label(daysofmonth, text=day, width = 5, height = 5)
         lbl.grid(column=idx%7, row=idx//7 + 10, padx = 2, pady = 2)
-        lbl.bind("<Button-1>", lambda e: editDay(e, i))
+        lbl.bind("<Button-1>", lambda e: editDay(e, datetime.datetime(year, month, day)))
+print(day)
 root.mainloop()
