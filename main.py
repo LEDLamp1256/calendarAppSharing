@@ -42,15 +42,28 @@ def addEvent(time, name):
     addEvent = Event(name, time, innerFrameEvents)
     addEvent.grid()
 
-def editDay(event, date:datetime.datetime):
+editDayStorage = None
+
+def editDay(event):
+    global editDayStorage
+    print(event.widget.datetimestorage)
+    print(editDayStorage)
+    date = event.widget.datetimestorage
+    print(dayStorage)
     innerFrameEvents.winfo_children()
+    dayStorage[editDayStorage] = []
     for child in innerFrameEvents.winfo_children():
+        if editDayStorage is not None and "in" in child.grid_info():
+            dayStorage[editDayStorage].append(child)
+            print(child.grid_info())
         child.grid_remove()
     eventList = dayStorage.get(date, [])
+    print(dayStorage)
     print(eventList)
     for idx, i in enumerate(eventList):
-        i.grid(column = 10, row = 0 + idx, sticky = NSEW)
+        i.grid(column = 0, row = 0 + idx, sticky = NSEW)
         print(i)
+    eventList.clear()
     timeEntry = tk.StringVar()
     timeEntry.set("00:00")
     ttk.Entry(innerFrameCreation, textvariable=timeEntry).grid(column = 0, row = 0)
@@ -58,10 +71,10 @@ def editDay(event, date:datetime.datetime):
     nameEntry.set("placeholder name")
     ttk.Entry(innerFrameCreation, textvariable=nameEntry).grid(column = 1, row = 0)
     ttk.Button(innerFrameCreation, text = "Add Event", command = lambda: addEvent(timeEntry.get(), nameEntry.get())).grid(column = 2, row = 0)
-
-
-    #tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
-
+    editDayStorage = date
+    print(dayStorage)
+    print()
+    # tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
 #daysofmonth = tk.Frame(frame, padx=10, pady=10)
 daysofmonth.grid(column=10, row=30)
 daysofmonth.config(background = "grey")
@@ -77,7 +90,7 @@ for idx, day in enumerate(cal.itermonthdays(year, month)):
 
         lbl = tk.Label(daysofmonth, text=day, width = 5, height = 5)
         lbl.grid(column=idx%7, row=idx//7 + 10, padx = 2, pady = 2)
-        datetimestorage = datetime.datetime(year, month, day)
-        lbl.bind("<Button-1>", lambda e: editDay(e, datetimestorage))
+        lbl.datetimestorage = datetime.datetime(year, month, day)
+        lbl.bind("<Button-1>", lambda e: editDay(e))
 print(day)
 root.mainloop()
