@@ -17,7 +17,14 @@ root = tk.Tk()
 frame = tk.Frame(root, padx=10, pady=10 )
 frame.config()
 frame.grid()
-ttk.Label(frame, text = "Month").grid(column = 10, row = 0)
+monthscrollerframe = tk.Frame(frame)
+monthscrollerframe.grid(column = 0, row = 0)
+monthlabel = ttk.Label(monthscrollerframe, text = "month")
+monthlabel.grid(column = 10, row = 0)
+monthscrollbuttonleft = ttk.Button(monthscrollerframe, text = "<-")
+monthscrollbuttonright = ttk.Button(monthscrollerframe, text = "->")
+monthscrollbuttonleft.grid(column = 0, row = 0)
+monthscrollbuttonright.grid(column = 11, row = 0)
 
 daysofmonth = tk.Frame(frame, padx=10, pady=10)
 #daysframe = ttk.Frame(frame, padding=10)
@@ -76,21 +83,46 @@ def editDay(event):
     print()
     # tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
 #daysofmonth = tk.Frame(frame, padx=10, pady=10)
-daysofmonth.grid(column=10, row=30)
+daysofmonth.grid(column=0, row=1)
 daysofmonth.config(background = "grey")
-cal = calendar.TextCalendar(calendar.MONDAY)
-year = 2022
-month = 6
-cal.formatmonth(year, month)
-print(cal.formatmonth(year, month))
-for idx, day in enumerate(cal.itermonthdays(year, month)):
-    if day == 0:
-        pass
-    else:
 
-        lbl = tk.Label(daysofmonth, text=day, width = 5, height = 5)
-        lbl.grid(column=idx%7, row=idx//7 + 10, padx = 2, pady = 2)
-        lbl.datetimestorage = datetime.datetime(year, month, day)
-        lbl.bind("<Button-1>", lambda e: editDay(e))
-print(day)
+currentday = datetime.datetime.today()
+
+
+year = currentday.year
+month = currentday.month
+
+monthdictionary = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
+
+
+
+def monthslider(year, month):
+    cal = calendar.TextCalendar(calendar.MONDAY)
+    cal.formatmonth(year, month)
+    print(cal.formatmonth(year, month))
+    monthlabel.config(text = f"It is {monthdictionary[month]}, {year}")
+    for idx, day in enumerate(cal.itermonthdays(year, month)):
+        if day == 0:
+            pass
+        else:
+            lbl = tk.Label(daysofmonth, text=day, width=5, height=5)
+            lbl.grid(column=idx % 7, row=idx // 7 + 10, padx=2, pady=2)
+            lbl.datetimestorage = datetime.datetime(year, month, day)
+            lbl.bind("<Button-1>", lambda e: editDay(e))
+
+def monthscrollerleft():
+    global month
+    global year
+    month -= 1
+
+    if month == 0:
+        month = 12
+        year -= 1
+    monthslider(year, month)
+
+monthscrollbuttonleft.config(command = monthscrollerleft)
+
+
+
+monthslider(currentday.year, currentday.month)
 root.mainloop()
