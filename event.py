@@ -19,4 +19,3 @@ class Event(ttk.Frame):
 
     def deleteEvent(self):
         self.grid_remove()
-

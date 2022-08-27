@@ -1,7 +1,7 @@
 import tkinter as tk
 import calendar
 from typing import Dict, List
-
+import classroomapi
 import event
 from event import Event
 from tkinter import ttk, NSEW
@@ -25,6 +25,25 @@ monthscrollbuttonleft = ttk.Button(monthscrollerframe, text = "<-")
 monthscrollbuttonright = ttk.Button(monthscrollerframe, text = "->")
 monthscrollbuttonleft.grid(column = 0, row = 0)
 monthscrollbuttonright.grid(column = 11, row = 0)
+
+courselist = classroomapi.getclasses()
+courseidinuse = []
+for course in courselist:
+    if course["courseState"] == "ACTIVE" :
+        courseidinuse.append(course["id"])
+
+for courseid in courseidinuse:
+    try:
+        activecoursework = classroomapi.classroomgetassignment(courseid)["courseWork"]
+        for assignment in activecoursework:
+            duedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"], assignment["dueDate"]["day"])
+            duedateevent = Event(assignment["title"], f'{assignment["dueTime"]["hours"]}:{assignment["dueTime"]["minutes"]}')
+            dayStorage[duedate] = duedateevent
+    except:
+        pass
+
+
+
 
 daysofmonth = tk.Frame(frame, padx=10, pady=10)
 #daysframe = ttk.Frame(frame, padding=10)
