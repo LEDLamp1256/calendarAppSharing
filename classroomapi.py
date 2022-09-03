@@ -1,4 +1,6 @@
 import os.path
+
+import google.auth.exceptions
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -37,7 +39,12 @@ def getclasses():
         credentials = Credentials.from_authorized_user_file("token.json", SCOPES)
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
+            try:
+                credentials.refresh(Request())
+            except google.auth.exceptions.RefreshError:
+                flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+                credentials = flow.run_local_server(port=0)
+
         else:
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             credentials = flow.run_local_server(port=0)

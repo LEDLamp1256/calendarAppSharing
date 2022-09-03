@@ -26,22 +26,6 @@ monthscrollbuttonright = ttk.Button(monthscrollerframe, text = "->")
 monthscrollbuttonleft.grid(column = 0, row = 0)
 monthscrollbuttonright.grid(column = 11, row = 0)
 
-courselist = classroomapi.getclasses()
-courseidinuse = []
-for course in courselist:
-    if course["courseState"] == "ACTIVE" :
-        courseidinuse.append(course["id"])
-
-for courseid in courseidinuse:
-    try:
-        activecoursework = classroomapi.classroomgetassignment(courseid)["courseWork"]
-        for assignment in activecoursework:
-            duedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"], assignment["dueDate"]["day"])
-            duedateevent = Event(assignment["title"], f'{assignment["dueTime"]["hours"]}:{assignment["dueTime"]["minutes"]}')
-            dayStorage[duedate] = duedateevent
-    except:
-        pass
-
 
 
 
@@ -54,7 +38,7 @@ for i in range(7):
 #ttk.Button(frame, text = "Exit button", command = root.destroy).grid(column = 10, row = 20)
 
 dayViewFrame = ttk.Frame(frame, padding=10)
-dayViewFrame.grid(column = 100 , row = 30)
+dayViewFrame.grid(column = 1 , row = 1)
 innerFrameEvents = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameEvents.grid(column =0 , row =0)
 innerFrameCreation = ttk.Frame(dayViewFrame, padding = 10)
@@ -63,6 +47,37 @@ placeholder1 = Event("placeholder1", "12:00", dayViewFrame)
 placeholder2 = Event("placeholder2", "13:00", dayViewFrame)
 placeholder3 = Event("placeholder3", "14:00", dayViewFrame)
 eventList = [placeholder1, placeholder2, placeholder3]
+
+courselist = classroomapi.getclasses()
+courseidinuse = []
+for course in courselist:
+    if course["courseState"] == "ACTIVE" :
+        courseidinuse.append(course["id"])
+
+for courseid in courseidinuse:
+        if "courseWork" in (courseworkstorage := classroomapi.classroomgetassignment(courseid)):
+            activecoursework = courseworkstorage["courseWork"]
+            for assignment in activecoursework:
+                if "dueDate" in assignment:
+                    if "dueTime" in assignment:
+                        assignmentduetimestring = ""
+                        if "hours" in assignment["dueTime"]:
+                            assignmentduetimestring += str(assignment["dueTime"]["hours"]) + ":"
+                        else:
+                            assignmentduetimestring += "23:"
+                        if "minutes" in assignment["dueTime"]:
+                            assignmentduetimestring += str(assignment["dueTime"]["minutes"])
+                        else:
+                            assignmentduetimestring += "00"
+                    else:
+                        assignmentduetimestring = "23:59"
+                    duedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"], assignment["dueDate"]["day"])
+                    duedateevent = Event(assignment["title"], assignmentduetimestring, innerFrameEvents)
+                    if duedate in dayStorage:
+                        dayStorage[duedate].append(duedateevent)
+                    else:
+                        dayStorage[duedate] = [duedateevent]
+
 
 def addEvent(time, name):
     addEvent = Event(name, time, innerFrameEvents)
