@@ -7,6 +7,7 @@ from event import Event
 from tkinter import ttk, NSEW
 import datetime
 
+
 #todo find out google classroom importing stuff
 #work on iterating through calendar output
 #figure out idea for end result (what is the desired outcome)
@@ -58,21 +59,41 @@ for courseid in courseidinuse:
         if "courseWork" in (courseworkstorage := classroomapi.classroomgetassignment(courseid)):
             activecoursework = courseworkstorage["courseWork"]
             for assignment in activecoursework:
+                print(assignment)
                 if "dueDate" in assignment:
                     if "dueTime" in assignment:
-                        assignmentduetimestring = ""
-                        if "hours" in assignment["dueTime"]:
-                            assignmentduetimestring += str(assignment["dueTime"]["hours"]) + ":"
-                        else:
-                            assignmentduetimestring += "23:"
                         if "minutes" in assignment["dueTime"]:
-                            assignmentduetimestring += str(assignment["dueTime"]["minutes"])
+                            utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
+                                                           ,
+                                                       assignment["dueDate"]["day"], assignment["dueTime"]["hours"],
+                                                       assignment["dueTime"]["minutes"], tzinfo=datetime.timezone.
+                                                       utc)
                         else:
-                            assignmentduetimestring += "00"
+                            utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
+                                                           ,
+                                                       assignment["dueDate"]["day"], assignment["dueTime"]["hours"],
+                                                       0, tzinfo=datetime.timezone.
+                                                       utc)
                     else:
-                        assignmentduetimestring = "23:59"
-                    duedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"], assignment["dueDate"]["day"])
-                    duedateevent = Event(assignment["title"], assignmentduetimestring, innerFrameEvents)
+                        raise Exception("duedate w no duetime")
+                        utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"],
+                                                       assignment["dueDate"]["day"], 23, 59, tzinfo=datetime.timezone.
+                                                       utc)
+                    localduedate = utcduedate.replace(tzinfo = datetime.timezone.utc).astimezone(None)
+                    #     assignmentduetimestring = ""
+                    #     if "hours" in assignment["dueTime"]:
+                    #         assignmentduetimestring += str(assignment["dueTime"]["hours"]) + ":"
+                    #     else:
+                    #         assignmentduetimestring += "23:"
+                    #     if "minutes" in assignment["dueTime"]:
+                    #         assignmentduetimestring += str(assignment["dueTime"]["minutes"])
+                    #     else:
+                    #         assignmentduetimestring += "00"
+                    # else:
+                    #     assignmentduetimestring = "23:59"
+                    duedate = datetime.datetime(localduedate.year, localduedate.month, localduedate.day)
+
+                    duedateevent = Event(assignment["title"], f"{localduedate.hour}:{localduedate.minute}", innerFrameEvents)
                     if duedate in dayStorage:
                         dayStorage[duedate].append(duedateevent)
                     else:
