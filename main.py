@@ -8,9 +8,9 @@ from tkinter import ttk, NSEW
 import datetime
 
 
-#todo find out google classroom importing stuff
-#work on iterating through calendar output
+#add color coding to days
 #figure out idea for end result (what is the desired outcome)
+#turn into exe
 #persistence in program(.json)
 
 dayStorage:Dict[datetime.datetime,List[Event]] = {}
@@ -93,7 +93,7 @@ for courseid in courseidinuse:
                     #     assignmentduetimestring = "23:59"
                     duedate = datetime.datetime(localduedate.year, localduedate.month, localduedate.day)
 
-                    duedateevent = Event(assignment["title"], f"{localduedate.hour}:{localduedate.minute}", innerFrameEvents)
+                    duedateevent = Event(assignment["title"], f"{localduedate.hour}:{localduedate.minute if localduedate.minute > 9 else '0' + str(localduedate.minute)}", innerFrameEvents)
                     if duedate in dayStorage:
                         dayStorage[duedate].append(duedateevent)
                     else:
