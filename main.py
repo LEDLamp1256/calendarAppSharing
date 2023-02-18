@@ -112,7 +112,6 @@ def editDay(event):
     print(editDayStorage)
     date = event.widget.datetimestorage
     print(dayStorage)
-    innerFrameEvents.winfo_children()
     dayStorage[editDayStorage] = []
     for child in innerFrameEvents.winfo_children():
         if editDayStorage is not None and "in" in child.grid_info():
@@ -156,6 +155,11 @@ def monthslider(year, month):
     cal.formatmonth(year, month)
     print(cal.formatmonth(year, month))
     monthlabel.config(text = f"It is {monthdictionary[month]}, {year}")
+    for child in daysofmonth.winfo_children():
+        child.destroy()
+    daysofweek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+    for i in range(7):
+        tk.Label(daysofmonth, text=daysofweek[i], width=5, height=2).grid(column=i, row=0, padx=2, pady=2)
     for idx, day in enumerate(cal.itermonthdays(year, month)):
         if day == 0:
             pass
@@ -164,6 +168,12 @@ def monthslider(year, month):
             lbl.grid(column=idx % 7, row=idx // 7 + 10, padx=2, pady=2)
             lbl.datetimestorage = datetime.datetime(year, month, day)
             lbl.bind("<Button-1>", lambda e: editDay(e))
+            print(lbl.datetimestorage)
+            print(dayStorage.get(lbl.datetimestorage, []))
+            if len(dayStorage.get(lbl.datetimestorage, [])) == 0:
+                lbl.config(bg = "yellow")
+            else:
+                lbl.config(bg = "red")
 
 def monthscrollerleft():
     global month
@@ -175,8 +185,18 @@ def monthscrollerleft():
         year -= 1
     monthslider(year, month)
 
-monthscrollbuttonleft.config(command = monthscrollerleft)
+def monthscrollerright():
+    global month
+    global year
+    month += 1
 
+    if month == 13:
+        month = 1
+        year += 1
+    monthslider(year, month)
+
+monthscrollbuttonleft.config(command = monthscrollerleft)
+monthscrollbuttonright.config(command = monthscrollerright)
 
 
 monthslider(currentday.year, currentday.month)
