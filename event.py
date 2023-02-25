@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+import main
+
 
 class Event(ttk.Frame):
     def __init__(self, name: str, time: str, superwidget : tk.Widget):
@@ -19,3 +21,4 @@ class Event(ttk.Frame):
 
     def deleteEvent(self):
         self.grid_remove()
+        #main.saveDay()

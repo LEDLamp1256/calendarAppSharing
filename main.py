@@ -103,28 +103,39 @@ for courseid in courseidinuse:
 def addEvent(time, name):
     addEvent = Event(name, time, innerFrameEvents)
     addEvent.grid()
+    saveDay()
 
-editDayStorage = None
+previousDay = None
+
+def saveDay():
+    global previousDay
+    if previousDay is not None:
+        dayStorage[previousDay] = []
+    for child in innerFrameEvents.winfo_children():
+        if previousDay is not None and "in" in child.grid_info():
+            dayStorage[previousDay].append(child)
+    monthslider(previousDay.year, previousDay.month)
+    print("Saving day.")
 
 def editDay(event):
-    global editDayStorage
+    global previousDay
     print(event.widget.datetimestorage)
-    print(editDayStorage)
-    date = event.widget.datetimestorage
+    print(previousDay)
+    date:datetime.datetime = event.widget.datetimestorage
     print(dayStorage)
-    dayStorage[editDayStorage] = []
+    #eventList = dayStorage.get(date, [])
+    #eventList.clear()
+    if previousDay is not None:
+        dayStorage[previousDay] = []
     for child in innerFrameEvents.winfo_children():
-        if editDayStorage is not None and "in" in child.grid_info():
-            dayStorage[editDayStorage].append(child)
+        if previousDay is not None and "in" in child.grid_info():
+            dayStorage[previousDay].append(child)
             print(child.grid_info())
         child.grid_remove()
     eventList = dayStorage.get(date, [])
-    print(dayStorage)
-    print(eventList)
     for idx, i in enumerate(eventList):
         i.grid(column = 0, row = 0 + idx, sticky = NSEW)
         print(i)
-    eventList.clear()
     timeEntry = tk.StringVar()
     timeEntry.set("00:00")
     ttk.Entry(innerFrameCreation, textvariable=timeEntry).grid(column = 0, row = 0)
@@ -132,9 +143,10 @@ def editDay(event):
     nameEntry.set("placeholder name")
     ttk.Entry(innerFrameCreation, textvariable=nameEntry).grid(column = 1, row = 0)
     ttk.Button(innerFrameCreation, text = "Add Event", command = lambda: addEvent(timeEntry.get(), nameEntry.get())).grid(column = 2, row = 0)
-    editDayStorage = date
+    previousDay = date
     print(dayStorage)
     print()
+    monthslider(date.year, date.month)
     # tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
 #daysofmonth = tk.Frame(frame, padx=10, pady=10)
 daysofmonth.grid(column=0, row=1)
