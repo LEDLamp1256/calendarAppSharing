@@ -44,16 +44,24 @@ innerFrameEvents = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameEvents.grid(column =0 , row =0)
 innerFrameCreation = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameCreation.grid(column = 0, row = 1)
-placeholder1 = Event("placeholder1", "12:00", dayViewFrame)
-placeholder2 = Event("placeholder2", "13:00", dayViewFrame)
-placeholder3 = Event("placeholder3", "14:00", dayViewFrame)
-eventList = [placeholder1, placeholder2, placeholder3]
+eventList = []
 
 courselist = classroomapi.getclasses()
 courseidinuse = []
 for course in courselist:
     if course["courseState"] == "ACTIVE" :
         courseidinuse.append(course["id"])
+
+previousDay = None
+def saveDay():
+    global previousDay
+    if previousDay is not None:
+        dayStorage[previousDay] = []
+    for child in innerFrameEvents.winfo_children():
+        if previousDay is not None and "in" in child.grid_info():
+            dayStorage[previousDay].append(child)
+    monthslider(previousDay.year, previousDay.month)
+    print("Saving day.")
 
 for courseid in courseidinuse:
         if "courseWork" in (courseworkstorage := classroomapi.classroomgetassignment(courseid)):
@@ -93,7 +101,7 @@ for courseid in courseidinuse:
                     #     assignmentduetimestring = "23:59"
                     duedate = datetime.datetime(localduedate.year, localduedate.month, localduedate.day)
 
-                    duedateevent = Event(assignment["title"], f"{localduedate.hour}:{localduedate.minute if localduedate.minute > 9 else '0' + str(localduedate.minute)}", innerFrameEvents)
+                    duedateevent = Event(assignment["title"], f"{localduedate.hour}:{localduedate.minute if localduedate.minute > 9 else '0' + str(localduedate.minute)}", innerFrameEvents, saveDay)
                     if duedate in dayStorage:
                         dayStorage[duedate].append(duedateevent)
                     else:
@@ -101,21 +109,12 @@ for courseid in courseidinuse:
 
 
 def addEvent(time, name):
-    addEvent = Event(name, time, innerFrameEvents)
+    addEvent = Event(name, time, innerFrameEvents, saveDay)
     addEvent.grid()
     saveDay()
 
-previousDay = None
 
-def saveDay():
-    global previousDay
-    if previousDay is not None:
-        dayStorage[previousDay] = []
-    for child in innerFrameEvents.winfo_children():
-        if previousDay is not None and "in" in child.grid_info():
-            dayStorage[previousDay].append(child)
-    monthslider(previousDay.year, previousDay.month)
-    print("Saving day.")
+
 
 def editDay(event):
     global previousDay
@@ -163,6 +162,7 @@ monthdictionary = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May"
 
 
 def monthslider(year, month):
+    curDay = datetime.date.today()
     cal = calendar.TextCalendar(calendar.MONDAY)
     cal.formatmonth(year, month)
     print(cal.formatmonth(year, month))
@@ -186,6 +186,9 @@ def monthslider(year, month):
                 lbl.config(bg = "yellow")
             else:
                 lbl.config(bg = "red")
+            if curDay == lbl.datetimestorage.date():
+                lbl.config(bg = "lightblue")
+
 
 def monthscrollerleft():
     global month
