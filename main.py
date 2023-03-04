@@ -6,7 +6,7 @@ import event
 from event import Event
 from tkinter import ttk, NSEW
 import datetime
-
+import json
 
 #add color coding to days
 #figure out idea for end result (what is the desired outcome)
@@ -216,3 +216,11 @@ monthscrollbuttonright.config(command = monthscrollerright)
 
 monthslider(currentday.year, currentday.month)
 root.mainloop()
+
+
+with open("calendarAppInfo.json", "w") as saveFile:
+    jsonDumpKeys = {}
+    for i in dayStorage:
+        jsonDumpKeys[str(i)] = dayStorage[i]
+    json.dump(jsonDumpKeys, saveFile)
+print("placeholer")
