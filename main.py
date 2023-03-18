@@ -7,6 +7,7 @@ from event import Event
 from tkinter import ttk, NSEW
 import datetime
 import json
+from customJson import DictionaryEncoder
 
 #add color coding to days
 #figure out idea for end result (what is the desired outcome)
@@ -222,5 +223,5 @@ with open("calendarAppInfo.json", "w") as saveFile:
     jsonDumpKeys = {}
     for i in dayStorage:
         jsonDumpKeys[str(i)] = dayStorage[i]
-    json.dump(jsonDumpKeys, saveFile)
+    json.dump(jsonDumpKeys, saveFile, cls = DictionaryEncoder)
 print("placeholer")
