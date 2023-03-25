@@ -7,7 +7,7 @@ from event import Event
 from tkinter import ttk, NSEW
 import datetime
 import json
-from customJson import DictionaryEncoder
+from customJson import DictionaryEncoder, DictionaryDecoder
 
 #add color coding to days
 #figure out idea for end result (what is the desired outcome)
@@ -46,7 +46,10 @@ innerFrameEvents.grid(column =0 , row =0)
 innerFrameCreation = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameCreation.grid(column = 0, row = 1)
 eventList = []
-
+with open("calendarAppInfo.json", "r") as saveFile:
+    temp = json.load(saveFile, cls = DictionaryDecoder)
+    print(temp)
+    exit()
 courselist = classroomapi.getclasses()
 courseidinuse = []
 for course in courselist:
@@ -109,9 +112,10 @@ for courseid in courseidinuse:
                         dayStorage[duedate] = [duedateevent]
 
 
-def addEvent(time, name):
-    addEvent = Event(name, time, innerFrameEvents, saveDay)
-    addEvent.grid()
+def addEvent(time, name, googleCalendarTF):
+    newEvent = Event(name, time, innerFrameEvents, saveDay, googleCalendar = googleCalendarTF)
+    print(newEvent.googleCalendar)
+    newEvent.grid()
     saveDay()
 
 
@@ -142,7 +146,7 @@ def editDay(event):
     nameEntry = tk.StringVar()
     nameEntry.set("placeholder name")
     ttk.Entry(innerFrameCreation, textvariable=nameEntry).grid(column = 1, row = 0)
-    ttk.Button(innerFrameCreation, text = "Add Event", command = lambda: addEvent(timeEntry.get(), nameEntry.get())).grid(column = 2, row = 0)
+    ttk.Button(innerFrameCreation, text = "Add Event", command = lambda: addEvent(timeEntry.get(), nameEntry.get(), googleCalendarTF=False)).grid(column = 2, row = 0)
     previousDay = date
     print(dayStorage)
     print()

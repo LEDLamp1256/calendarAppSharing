@@ -4,11 +4,12 @@ from tkinter import ttk
 
 
 class Event(ttk.Frame):
-    def __init__(self, name: str, time: str, superwidget : tk.Widget, onDeleteFunction):
+    def __init__(self, name: str, time: str, superwidget : tk.Widget, onDeleteFunction, googleCalendar = True):
         super(Event, self).__init__(superwidget)
         self.name = name
         self.time = time
         self.onDeleteFunction = onDeleteFunction
+        self.googleCalendar = googleCalendar
 
         timeLabel = ttk.Label(self, text = time)
         timeLabel.grid(column = 0, row = 10)
