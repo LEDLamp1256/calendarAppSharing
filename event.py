@@ -24,3 +24,13 @@ class Event(ttk.Frame):
         self.grid_remove()
         self.onDeleteFunction()
         #main.saveDay()
+
+class EventParent():
+    def __init__(self, name, time, googleCalendar = True):
+        self.name = name
+        self.time = time
+        self.googleCalendar = googleCalendar
+
+    #takes in superwidget & ondelete, uses name, time, google cal value to return new event
+    def eventCreate(self, superwidget, ondelete):
+        return Event(self.name, self.time, superwidget, ondelete, self.googleCalendar)

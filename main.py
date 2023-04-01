@@ -12,7 +12,6 @@ from customJson import DictionaryEncoder, DictionaryDecoder
 #add color coding to days
 #figure out idea for end result (what is the desired outcome)
 #turn into exe
-#persistence in program(.json)
 
 dayStorage:Dict[datetime.datetime,List[Event]] = {}
 root = tk.Tk()
@@ -46,15 +45,6 @@ innerFrameEvents.grid(column =0 , row =0)
 innerFrameCreation = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameCreation.grid(column = 0, row = 1)
 eventList = []
-with open("calendarAppInfo.json", "r") as saveFile:
-    temp = json.load(saveFile, cls = DictionaryDecoder)
-    print(temp)
-    exit()
-courselist = classroomapi.getclasses()
-courseidinuse = []
-for course in courselist:
-    if course["courseState"] == "ACTIVE" :
-        courseidinuse.append(course["id"])
 
 previousDay = None
 def saveDay():
@@ -66,6 +56,26 @@ def saveDay():
             dayStorage[previousDay].append(child)
     monthslider(previousDay.year, previousDay.month)
     print("Saving day.")
+
+with open("calendarAppInfo.json", "r") as saveFile:
+    temp = json.load(saveFile, cls = DictionaryDecoder)
+    print(temp)
+    for date in temp:
+        print(temp[date])
+        newKey = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        eventOnly = []
+        for x in temp[date]:
+            if x is not None:
+                eventOnly.append(x.eventCreate(innerFrameEvents, saveDay))
+        dayStorage[newKey] = eventOnly
+
+courselist = classroomapi.getclasses()
+courseidinuse = []
+for course in courselist:
+    if course["courseState"] == "ACTIVE" :
+        courseidinuse.append(course["id"])
+
+
 
 for courseid in courseidinuse:
         if "courseWork" in (courseworkstorage := classroomapi.classroomgetassignment(courseid)):
@@ -187,10 +197,15 @@ def monthslider(year, month):
             lbl.bind("<Button-1>", lambda e: editDay(e))
             print(lbl.datetimestorage)
             print(dayStorage.get(lbl.datetimestorage, []))
+            r = 245
+            g = 230
+            b = 66
             if len(dayStorage.get(lbl.datetimestorage, [])) == 0:
-                lbl.config(bg = "yellow")
+                lbl.config(bg = f"#{r :02x}{g :02x}{b :02x}")
             else:
-                lbl.config(bg = "red")
+                g -= 20 * len(dayStorage.get(lbl.datetimestorage, []))
+                g = max(g, 0)
+                lbl.config(bg = f"#{r :02x}{g :02x}{b :02x}")
             if curDay == lbl.datetimestorage.date():
                 lbl.config(bg = "lightblue")
 
