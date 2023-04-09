@@ -9,9 +9,7 @@ import datetime
 import json
 from customJson import DictionaryEncoder, DictionaryDecoder
 
-#add color coding to days
 #figure out idea for end result (what is the desired outcome)
-#turn into exe
 
 dayStorage:Dict[datetime.datetime,List[Event]] = {}
 root = tk.Tk()
