@@ -17,7 +17,7 @@ frame = tk.Frame(root, padx=10, pady=10 )
 frame.config()
 frame.grid()
 monthscrollerframe = tk.Frame(frame)
-monthscrollerframe.grid(column = 0, row = 0)
+monthscrollerframe.grid(column = 1, row = 0)
 monthlabel = ttk.Label(monthscrollerframe, text = "month")
 monthlabel.grid(column = 10, row = 0)
 monthscrollbuttonleft = ttk.Button(monthscrollerframe, text = "<-")
@@ -25,8 +25,12 @@ monthscrollbuttonright = ttk.Button(monthscrollerframe, text = "->")
 monthscrollbuttonleft.grid(column = 0, row = 0)
 monthscrollbuttonright.grid(column = 11, row = 0)
 
-
-
+upcomingEvents = tk.Frame(frame, padx = 10, pady = 10)
+upcomingEvents.grid(column = 0, row = 1)
+upcomingEventsTitle = ttk.Label(frame, text = "Upcoming events")
+testLabel = ttk.Label(upcomingEvents, text = "aaa")
+testLabel.grid()
+upcomingEventsTitle.grid(column = 0, row = 0)
 
 daysofmonth = tk.Frame(frame, padx=10, pady=10)
 #daysframe = ttk.Frame(frame, padding=10)
@@ -37,9 +41,9 @@ for i in range(7):
 #ttk.Button(frame, text = "Exit button", command = root.destroy).grid(column = 10, row = 20)
 
 dayViewFrame = ttk.Frame(frame, padding=10)
-dayViewFrame.grid(column = 1 , row = 1)
+dayViewFrame.grid(column = 2 , row = 1)
 innerFrameEvents = ttk.Frame(dayViewFrame, padding = 10)
-innerFrameEvents.grid(column =0 , row =0)
+innerFrameEvents.grid(column = 0, row =0)
 innerFrameCreation = ttk.Frame(dayViewFrame, padding = 10)
 innerFrameCreation.grid(column = 0, row = 1)
 eventList = []
@@ -53,6 +57,18 @@ def saveDay():
         if previousDay is not None and "in" in child.grid_info():
             dayStorage[previousDay].append(child)
     monthslider(previousDay.year, previousDay.month)
+
+    curDay = datetime.date.today()
+    cal = calendar.TextCalendar(calendar.MONDAY)
+    for child in upcomingEvents.winfo_children():
+        child.destroy()
+    for idx, day in enumerate(cal.itermonthdays(curDay.year, curDay.month)):
+        if day >= curDay.day and day <= curDay.day + 3:
+            upcomingEventsDateTime = datetime.datetime(curDay.year, curDay.month, day)
+            for e in dayStorage.get(upcomingEventsDateTime, []):
+                ttk.Label(upcomingEvents, text = f"{e.time}, {e.name}").grid()
+
+
     print("Saving day.")
 
 with open("calendarAppInfo.json", "r") as saveFile:
@@ -161,7 +177,7 @@ def editDay(event):
     monthslider(date.year, date.month)
     # tk.Label(dayViewFrame, text = event).grid(column = 100, row = 0, padx = 2, pady = 2)
 #daysofmonth = tk.Frame(frame, padx=10, pady=10)
-daysofmonth.grid(column=0, row=1)
+daysofmonth.grid(column=1, row=1)
 daysofmonth.config(background = "grey")
 
 currentday = datetime.datetime.today()
