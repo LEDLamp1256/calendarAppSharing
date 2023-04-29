@@ -9,8 +9,6 @@ import datetime
 import json
 from customJson import DictionaryEncoder, DictionaryDecoder
 
-
-
 #figure out idea for end result (what is the desired outcome)
 
 dayStorage:Dict[datetime.datetime,List[Event]] = {}
@@ -52,7 +50,6 @@ previousDay : datetime.datetime = None
 
 def saveDay():
 
-
     global previousDay
 
     if previousDay is not None:
@@ -61,7 +58,6 @@ def saveDay():
             if "in" in child.grid_info():
                 dayStorage[previousDay].append(child)
         monthslider(previousDay.year, previousDay.month)
-
 
     curDay = datetime.date.today()
 
@@ -74,14 +70,15 @@ def saveDay():
         if day >= curDay.day and daysAhead > 0:
             daysAhead -= 1
             if daysAhead == 3:
+                ttk.Label(upcomingEvents, text = " ").grid()
                 ttk.Label(upcomingEvents, text = "Events in the next 5 days:").grid()
             if daysAhead == 1:
+                ttk.Label(upcomingEvents, text = " ").grid()
                 ttk.Label(upcomingEvents, text = "Events in the next 7 days:").grid()
 
             upcomingEventsDateTime = datetime.datetime(curDay.year, curDay.month, day)
             for e in dayStorage.get(upcomingEventsDateTime, []):
                 ttk.Label(upcomingEvents, text = f"{e.time}, {e.name}").grid()
-
 
     print("Saving day.")
 
@@ -96,8 +93,10 @@ def saveDay():
         if daysAhead > 0:
             daysAhead -= 1
             if daysAhead == 3:
+                ttk.Label(upcomingEvents, text=" ").grid()
                 ttk.Label(upcomingEvents, text = "Events in the next 5 days:").grid()
             if daysAhead == 1:
+                ttk.Label(upcomingEvents, text=" ").grid()
                 ttk.Label(upcomingEvents, text = "Events in the next 7 days:").grid()
             upcomingEventsDateTime = datetime.datetime(nextYear,nextMonth, day)
             for e in dayStorage.get(upcomingEventsDateTime, []):
