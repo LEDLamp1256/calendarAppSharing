@@ -144,7 +144,7 @@ for courseid in courseidinuse:
                                                        0, tzinfo=datetime.timezone.
                                                        utc)
                     else:
-                        raise Exception("duedate w no duetime")
+                        #raise Exception("duedate w no duetime")
                         utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"],
                                                        assignment["dueDate"]["day"], 23, 59, tzinfo=datetime.timezone.
                                                        utc)
