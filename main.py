@@ -132,11 +132,18 @@ for courseid in courseidinuse:
                 if "dueDate" in assignment:
                     if "dueTime" in assignment:
                         if "minutes" in assignment["dueTime"]:
-                            utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
+                            if "hours" in assignment["dueTime"]:
+                                utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
                                                            ,
-                                                       assignment["dueDate"]["day"], assignment["dueTime"]["hours"],
-                                                       assignment["dueTime"]["minutes"], tzinfo=datetime.timezone.
-                                                       utc)
+                                                        assignment["dueDate"]["day"], assignment["dueTime"]["hours"],
+                                                        assignment["dueTime"]["minutes"], tzinfo=datetime.timezone.
+                                                        utc)
+                            else:
+                                utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
+                                                           ,
+                                                        assignment["dueDate"]["day"], 0,
+                                                        assignment["dueTime"]["minutes"], tzinfo=datetime.timezone.
+                                                        utc)
                         else:
                             utcduedate = datetime.datetime(assignment["dueDate"]["year"], assignment["dueDate"]["month"]
                                                            ,
